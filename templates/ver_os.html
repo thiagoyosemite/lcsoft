@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Ordem de Serviço #{{ os['id'] }}</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Cliente: {{ os['nome'] }}</h5>
+        <p><strong>Tipo:</strong> {{ os['tipo_os'] }}</p>
+        <p><strong>Status atual:</strong>
+            <span class="badge 
+                {% if os['status'] == 'Aberta' %}bg-danger
+                {% elif os['status'] == 'Agendada' %}bg-warning
+                {% elif os['status'] == 'Em Andamento' %}bg-info
+                {% elif os['status'] == 'Concluída' %}bg-success
+                {% else %}bg-secondary{% endif %}">
+                {{ os['status'] }}
+            </span>
+        </p>
+        <p><strong>Data de Abertura:</strong> {{ os['data_abertura'] }}</p>
+        <p><strong>Data Agendada:</strong> {{ os['data_agendamento'] or 'Não agendada' }}</p>
+        <p><strong>Técnico Responsável:</strong> {{ os['tecnico_responsavel'] or '—' }}</p>
+        <p><strong>Descrição:</strong> {{ os['descricao'] or '—' }}</p>
+        <p><strong>Observações:</strong> {{ os['observacoes'] or '—' }}</p>
+        {% if os['data_conclusao'] %}
+        <p><strong>Data de Conclusão:</strong> {{ os['data_conclusao'] }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<h3>Atualizar Status</h3>
+<form method="POST" action="{{ url_for('atualizar_status_os', os_id=os['id']) }}">
+    <div class="mb-3">
+        <label class="form-label">Novo Status</label>
+        <select name="status" class="form-select">
+            <option value="Aberta" {% if os['status']=='Aberta' %}selected{% endif %}>Aberta</option>
+            <option value="Agendada" {% if os['status']=='Agendada' %}selected{% endif %}>Agendada</option>
+            <option value="Em Andamento" {% if os['status']=='Em Andamento' %}selected{% endif %}>Em Andamento</option>
+            <option value="Concluída" {% if os['status']=='Concluída' %}selected{% endif %}>Concluída</option>
+            <option value="Cancelada" {% if os['status']=='Cancelada' %}selected{% endif %}>Cancelada</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Observações / Relato Técnico</label>
+        <textarea name="observacoes" class="form-control" rows="4">{{ os['observacoes'] or '' }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Atualizar Status</button>
+</form>
+
+<div class="mt-4">
+    <a href="{{ url_for('ordens_servico') }}" class="btn btn-secondary">Voltar para Lista</a>
+</div>
+{% endblock %}

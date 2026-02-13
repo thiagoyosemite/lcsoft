@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Gerar Fatura</h1>
+
+<form method="POST">
+    <div class="mb-3">
+        <label>Cliente</label>
+        <select name="cliente_id" class="form-select" required>
+            <option value="">Selecione...</option>
+            {% for c in clientes %}
+            <option value="{{ c['id'] }}">{{ c['nome'] }} (ID: {{ c['id'] }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Valor (R$)</lßabel>
+            <input type="number" step="0.01" name="valor" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Data de Vencimento</label>
+        <input type="date" name="data_vencimento" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Gerar</button>
+</form>
+{% endblock %}

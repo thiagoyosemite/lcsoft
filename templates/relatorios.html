@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Relatórios Simples</h2>
+
+    <!-- Resumo de Faturas Pendentes -->
+    <div class="row g-4 justify-content-center mb-5">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3"></i>
+                    <h5 class="text-light">Faturas Pendentes</h5>
+                    <h3 class="text-light fw-bold">{{ pendentes_count }}</h3>
+                    <h4 class="text-light fw-bold">R$ {{ "%.2f"|format(pendentes_valor) }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OS por Status -->
+    <h4 class="text-center mb-4 text-light">Ordens de Serviço por Status</h4>
+    <div class="row g-4 justify-content-center mb-5">
+        {% for status, count in os_por_status %}
+        <div class="col-6 col-md-4 col-lg">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-tools fs-1 text-info mb-3"></i>
+                    <h6 class="text-light">{{ status }}</h6>
+                    <h4 class="text-light fw-bold">{{ count }}</h4>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Clientes por Plano -->
+    <h4 class="text-center mb-4 text-light">Clientes por Plano</h4>
+    <div class="row g-4 justify-content-center mb-5">
+        {% for plano, count in clientes_por_plano %}
+        <div class="col-6 col-md-4 col-lg">
+            <div class="card text-center h-100">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <i class="bi bi-speedometer2 fs-1 text-primary mb-3"></i>
+                    <h6 class="text-light">{{ plano or 'Sem plano' }}</h6>
+                    <h4 class="text-light fw-bold">{{ count }}</h4>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg px-5">
+            Voltar ao Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

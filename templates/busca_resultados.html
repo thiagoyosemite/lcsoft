@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Resultados da Busca por "{{ termo }}"</h2>
+
+    <!-- Seção Clientes -->
+    {% if clientes %}
+    <div class="card glass-card mb-5">
+        <div class="card-header text-light fw-bold bg-dark bg-opacity-75">
+            <i class="bi bi-people me-2"></i> Clientes Encontrados ({{ clientes|length }})
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Endereço</th>
+                            <th>Plano</th>
+                            <th>Serial ONU</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in clientes %}
+                        <tr>
+                            <td>{{ c['id'] }}</td>
+                            <td>{{ c['nome'] }}</td>
+                            <td>{{ c['endereco'] or '—' }}</td>
+                            <td>{{ c['plano'] or '—' }}</td>
+                            <td>{{ c['onu_serial'] or '—' }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if c['status'] == 'ativo' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ c['status']|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('clientes') }}" class="btn btn-sm btn-outline-cyan">Ver</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Seção OS -->
+    {% if os_list %}
+    <div class="card glass-card mb-5">
+        <div class="card-header text-light fw-bold bg-dark bg-opacity-75">
+            <i class="bi bi-tools me-2"></i> Ordens de Serviço Encontradas ({{ os_list|length }})
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Data Abertura</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for os in os_list %}
+                        <tr>
+                            <td>{{ os['id'] }}</td>
+                            <td>{{ os['nome'] }}</td>
+                            <td>{{ os['tipo_os'] }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if os['status'] == 'Concluída' %}bg-success{% elif os['status'] == 'Cancelada' %}bg-secondary{% else %}bg-warning{% endif %}">
+                                    {{ os['status'] }}
+                                </span>
+                            </td>
+                            <td>{{ os['data_abertura'] or '—' }}</td>
+                            <td>
+                                <a href="{{ url_for('ver_os', os_id=os['id']) }}"
+                                    class="btn btn-sm btn-outline-cyan">Ver</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Seção Faturas -->
+    {% if faturas %}
+    <div class="card glass-card mb-5">
+        <div class="card-header text-light fw-bold bg-dark bg-opacity-75">
+            <i class="bi bi-receipt me-2"></i> Faturas Encontradas ({{ faturas|length }})
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Valor (R$)</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in faturas %}
+                        <tr>
+                            <td>{{ f['id'] }}</td>
+                            <td>{{ f['nome'] }}</td>
+                            <td>{{ "%.2f"|format(f['valor']) }}</td>
+                            <td>{{ f['data_vencimento'] or '—' }}</td>
+                            <td>
+                                <span class="badge {% if f['pago'] %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ 'Paga' if f['pago'] else 'Pendente' }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('marcar_pago', fatura_id=f['id']) }}"
+                                    class="btn btn-sm btn-outline-cyan">Pagar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Seção ONUs -->
+    {% if onus %}
+    <div class="card glass-card mb-5">
+        <div class="card-header text-light fw-bold bg-dark bg-opacity-75">
+            <i class="bi bi-plug me-2"></i> ONUs Encontradas ({{ onus|length }})
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>Serial</th>
+                            <th>Cliente</th>
+                            <th>Status</th>
+                            <th>Sinal RX (dBm)</th>
+                            <th>Loss</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for o in onus %}
+                        <tr>
+                            <td>{{ o['serial'] }}</td>
+                            <td>{{ o['cliente_nome'] or '—' }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if o['status'] == 'Online' %}bg-success{% elif o['status'] == 'Offline' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ o['status'] }}
+                                </span>
+                            </td>
+                            <td>{{ o['sinal_rx'] or '—' }}</td>
+                            <td>{{ o['loss'] or 0 }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('provisionar_onu', onu_id=o['id']) }}"
+                                    class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">Provisionar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if not clientes and not os_list and not faturas and not onus %}
+    <div class="alert alert-info text-center m-4">
+        Nenhum resultado encontrado para "{{ termo }}".
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg px-5">Voltar ao Dashboard</a>
+    </div>
+</div>
+{% endblock %}

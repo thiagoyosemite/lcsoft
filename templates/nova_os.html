@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Nova Ordem de Serviço</h1>
+
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Cliente *</label>
+        <select name="cliente_id" class="form-select" required>
+            <option value="">Selecione o cliente...</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente['id'] }}">{{ cliente['nome'] }} (ID: {{ cliente['id'] }})</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Tipo de OS *</label>
+        <select name="tipo_os" class="form-select" required>
+            <option value="">Selecione...</option>
+            <option value="Instalação">Instalação</option>
+            <option value="Reparo">Reparo / Manutenção</option>
+            <option value="Mudança de Plano">Mudança de Plano</option>
+            <option value="Mudança de Endereço">Mudança de Endereço</option>
+            <option value="Vistoria">Vistoria</option>
+            <option value="Cancelamento">Cancelamento</option>
+            <option value="Outros">Outros</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Descrição do Problema / Serviço</label>
+        <textarea name="descricao" class="form-control" rows="4"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Data de Agendamento</label>
+        <input type="date" name="data_agendamento" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Técnico Responsável</label>
+        <input type="text" name="tecnico" class="form-control" placeholder="Nome do técnico">
+    </div>
+
+    <button type="submit" class="btn btn-success">Criar OS</button>
+    <a href="{{ url_for('ordens_servico') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Lista de Faturas</h2>
+
+    <div class="card glass-card shadow-lg">
+        <div class="card-header text-light fw-bold bg-dark bg-opacity-75">
+            <i class="bi bi-receipt me-2"></i> Faturas Cadastradas
+        </div>
+        <div class="card-body p-0">
+            {% if faturas %}
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Valor (R$)</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in faturas %}
+                        <tr>
+                            <td>{{ f['id'] }}</td>
+                            <td>{{ f['nome'] }}</td>
+                            <td class="fw-bold">{{ "%.2f"|format(f['valor']) }}</td>
+                            <td>{{ f['data_vencimento'] }}</td>
+                            <td>
+                                {% if f['pago'] %}
+                                <span class="badge bg-success">Paga</span>
+                                {% else %}
+                                <span class="badge bg-danger">Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not f['pago'] %}
+                                <a href="{{ url_for('marcar_pago', fatura_id=f['id']) }}"
+                                    class="btn btn-sm btn-success">
+                                    <i class="bi bi-check-circle me-1"></i>Marcar como Paga
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center m-4">
+                Nenhuma fatura cadastrada ainda.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('gerar_fatura') }}" class="btn btn-outline-primary btn-lg px-5">
+            <i class="bi bi-plus-circle me-2"></i> Gerar Nova Fatura
+        </a>
+    </div>
+</div>
+{% endblock %}

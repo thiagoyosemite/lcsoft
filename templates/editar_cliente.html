@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Editar Cliente #{{ cliente['id'] }}</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card glass-card shadow-lg">
+                <div class="card-body p-5">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label for="nome" class="form-label">Nome do Cliente *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" value="{{ cliente['nome'] }}"
+                                required autofocus>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="endereco" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="endereco" name="endereco"
+                                value="{{ cliente['endereco'] }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="plano" class="form-label">Plano (ex: 100MB)</label>
+                            <input type="text" class="form-control" id="plano" name="plano"
+                                value="{{ cliente['plano'] }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="{{ cliente['email'] }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="telefone" class="form-label">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" name="telefone"
+                                value="{{ cliente['telefone'] }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="ativo" {% if cliente['status']=='ativo' %}selected{% endif %}>Ativo
+                                </option>
+                                <option value="inativo" {% if cliente['status']=='inativo' %}selected{% endif %}>Inativo
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="status_contrato" class="form-label">Status do Contrato</label>
+                            <select name="status_contrato" class="form-select" required>
+                                <option value="ativo" {% if cliente['status_contrato']=='ativo' %}selected{% endif %}>
+                                    Ativo</option>
+                                <option value="suspenso" {% if cliente['status_contrato']=='suspenso' %}selected{% endif
+                                    %}>Suspenso</option>
+                                <option value="inativo" {% if cliente['status_contrato']=='inativo' %}selected{% endif
+                                    %}>Inativo</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end mt-5">
+                            <a href="{{ url_for('clientes') }}"
+                                class="btn btn-outline-secondary btn-lg px-5">Cancelar</a>
+                            <button type="submit" class="btn btn-outline-primary btn-lg px-5">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

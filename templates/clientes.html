@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Lista de Clientes</h2>
+
+    <div class="card glass-card shadow-lg mb-5">
+        <div
+            class="card-header text-light fw-bold bg-dark bg-opacity-75 d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-people me-2"></i> Clientes Cadastrados ({{ clientes|length }})
+            </div>
+            <a href="{{ url_for('adicionar_cliente') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-person-plus me-1"></i> Novo Cliente
+            </a>
+        </div>
+        <div class="card-body p-0">
+            {% if clientes %}
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Endereço</th>
+                            <th>Plano</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Data Cadastro</th>
+                            <th>Status Geral</th>
+                            <th>Status Contrato</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in clientes %}
+                        <tr>
+                            <td>{{ c['id'] }}</td>
+                            <td>{{ c['nome'] }}</td>
+                            <td>{{ c['endereco'] or '—' }}</td>
+                            <td>{{ c['plano'] or '—' }}</td>
+                            <td>{{ c['email'] or '—' }}</td>
+                            <td>{{ c['telefone'] or '—' }}</td>
+                            <td>{{ c['data_cadastro'] or '—' }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if c['status'] == 'ativo' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ c['status']|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if 'status_contrato' in c %}
+                                <span
+                                    class="badge {% if c['status_contrato'] == 'ativo' %}bg-success{% elif c['status_contrato'] == 'suspenso' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ c['status_contrato']|capitalize }}
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">—</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span
+                                    class="badge {% if c['status'] == 'ativo' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ c['status']|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <span
+                                    class="badge {% if c['status_contrato'] == 'ativo' %}bg-success{% elif c['status_contrato'] == 'suspenso' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ c['status_contrato']|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('editar_cliente', cliente_id=c['id']) }}"
+                                    class="btn btn-sm btn-outline-cyan">
+                                    <i class="bi bi-pencil me-1"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                    data-bs-target="#confirmDelete{{ c['id'] }}">
+                                    <i class="bi bi-trash me-1"></i> Excluir
+                                </button>
+                                <!-- Modal de confirmação (já existente) -->
+                                <!-- ... mantenha o modal que você já tem ... -->
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center m-4">
+                Nenhum cliente cadastrado ainda.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Ordens de Serviço</h2>
+
+    <div class="card glass-card shadow-lg mb-5">
+        <div
+            class="card-header text-light fw-bold bg-dark bg-opacity-75 d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-tools me-2"></i> Ordens de Serviço Cadastradas
+            </div>
+            <a href="{{ url_for('nova_os') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Nova OS
+            </a>
+        </div>
+        <div class="card-body p-0">
+            {% if os_list %}
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Data Abertura</th>
+                            <th>Técnico</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for os in os_list %}
+                        <tr>
+                            <td>{{ os['id'] }}</td>
+                            <td>{{ os['nome'] }}</td>
+                            <td>{{ os['tipo_os'] }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if os['status'] == 'Concluída' %}bg-success{% elif os['status'] == 'Cancelada' %}bg-secondary{% else %}bg-warning{% endif %}">
+                                    {{ os['status'] }}
+                                </span>
+                            </td>
+                            <td>{{ os['data_abertura'] or '—' }}</td>
+                            <td>{{ os['tecnico_responsavel'] or '—' }}</td>
+                            <td>
+                                <a href="{{ url_for('ver_os', os_id=os['id']) }}" class="btn btn-sm btn-outline-cyan">
+                                    <i class="bi bi-eye me-1"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center m-4">
+                Nenhuma ordem de serviço cadastrada ainda.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

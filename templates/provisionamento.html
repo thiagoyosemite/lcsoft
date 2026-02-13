@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Provisionamento de ONTs / ONUs</h2>
+
+    <div class="card glass-card shadow-lg mb-5">
+        <div
+            class="card-header text-light fw-bold bg-dark bg-opacity-75 d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-plug me-2"></i> ONTs / ONUs Detectadas ({{ onus|length }})
+            </div>
+            <a href="#" class="btn btn-outline-info btn-sm">
+                <i class="bi bi-arrow-repeat me-1"></i> Atualizar Lista
+            </a>
+        </div>
+        <div class="card-body p-0">
+            {% if onus %}
+            <div class="table-responsive">
+                <table class="table table-hover table-dark table-striped m-0">
+                    <thead>
+                        <tr>
+                            <th>Serial</th>
+                            <th>Cliente</th>
+                            <th>Status</th>
+                            <th>Sinal RX (dBm)</th>
+                            <th>Sinal TX (dBm)</th>
+                            <th>Loss</th>
+                            <th>Última Atualização</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for onu in onus %}
+                        <tr>
+                            <td>{{ onu['serial'] }}</td>
+                            <td>{{ onu['cliente_nome'] or '—' }}</td>
+                            <td>
+                                <span
+                                    class="badge {% if onu['status'] == 'Online' %}bg-success{% elif onu['status'] == 'Offline' %}bg-danger{% elif onu['status'] == 'Provisionando' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                    {{ onu['status'] }}
+                                </span>
+                            </td>
+                            <td>{{ onu['sinal_rx'] or '—' }}</td>
+                            <td>{{ onu['sinal_tx'] or '—' }}</td>
+                            <td>{{ onu['loss'] or 0 }}</td>
+                            <td>{{ onu['ultima_atualizacao'] or '—' }}</td>
+                            <td>
+                                {% if onu['status'] != 'Online' %}
+                                <form method="POST" action="{{ url_for('provisionar_onu', onu_id=onu['id']) }}"
+                                    class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="bi bi-plug me-1"></i> Provisionar
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-success">Já provisionada</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center m-4">
+                Nenhuma ONU/ONT detectada ainda.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

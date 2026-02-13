@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCSoft - Gestão de Provedor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <svg style="display:none;">
+        <filter id="liquid">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation="2" />
+        </filter>
+    </svg>
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #141426, #1e1e3a);
+            /* Fundo mais claro e suave */
+            --text: #ffffff;
+            /* Todos os textos principais brancos */
+            --muted: #d0d0ff;
+            /* Textos secundários */
+            --card-bg: rgba(50, 50, 90, 0.8);
+            /* Cards um pouco mais claros */
+            --border: rgba(99, 102, 241, 0.2);
+            --glow: rgba(99, 102, 241, 0.15);
+            /* Glow bem sutil */
+            --primary: #6366f1;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 250px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            box-shadow: 0 0 15px var(--glow);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            color: var(--text);
+            padding: 14px 20px;
+            display: block;
+            text-decoration: none;
+            /* Sem sublinhado */
+            transition: background .3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px var(--glow);
+            border-radius: 10px;
+            transition: box-shadow .3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px var(--glow);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        small,
+        .text-muted,
+        .form-label {
+            color: var(--text);
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(60, 60, 100, 0.9);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 .2rem rgba(99, 102, 241, .25);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .text-success {
+            color: var(--success) !important;
+        }
+
+        .text-warning {
+            color: var(--warning) !important;
+        }
+
+        .text-danger {
+            color: var(--danger) !important;
+        }
+
+        .search-bar {
+            max-width: 100%;
+            margin: 0;
+            padding: 0 20px 0 260px;
+            /* desloca para direita, alinhando com início dos cards */
+        }
+
+        /* Tabelas no estilo glass suave */
+        .table-dark {
+            --bs-table-bg: rgba(40, 40, 80, 0.8);
+            --bs-table-color: #ffffff;
+            --bs-table-border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .table th,
+        .table td {
+            vertical-align: middle;
+        }
+
+        .badge.bg-success {
+            background-color: var(--success) !important;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger) !important;
+        }
+
+        .search-bar .form-control {
+            background: rgba(50, 50, 90, 0.85);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #ffffff;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .search-bar .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+
+        .search-bar .btn-outline-cyan {
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Animação suave no logo */
+        .logo-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUpLogo 1s ease-out forwards;
+        }
+
+        .logo-icon,
+        .logo-img {
+            transition: transform .4s ease, filter .4s ease;
+        }
+
+        .logo-container:hover .logo-icon,
+        .logo-container:hover .logo-img {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.7));
+        }
+
+        .logo-title,
+        .logo-subtitle {
+            transition: text-shadow .4s ease;
+        }
+
+        .logo-container:hover .logo-title,
+        .logo-container:hover .logo-subtitle {
+            text-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
+        }
+
+        /* Keyframe de entrada suave */
+        @keyframes fadeInUpLogo {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-bar .form-control {
+            background: rgba(50, 50, 90, 0.85);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #ffffff;
+            font-size: 1.1rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Placeholder da barra de pesquisa em branco/neon */
+        .search-bar .form-control::placeholder {
+            color: #c0c0ff;
+            /* branco suave com leve tom neon */
+            opacity: 0.7;
+            text-shadow: 0 0 4px rgba(99, 102, 241, 0.3);
+            /* glow sutil */
+        }
+
+        .search-bar .form-control:focus::placeholder {
+            color: #a5b4fc;
+            /* mais visível quando focado */
+        }
+
+        .search-bar .form-control:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+
+        .search-bar .btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            transition: color .3s;
+        }
+
+        .search-bar .btn:hover {
+            color: #a5b4fc;
+        }
+
+        .sidebar .border-top {
+            border-color: rgba(99, 102, 241, 0.4) !important;
+        }
+
+        .sidebar h6 {
+            color: #a5b4fc;
+            text-shadow: 0 0 6px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Modo minimizado da sidebar */
+        .sidebar.minimized {
+            width: 70px !important;
+            transition: width 0.4s ease;
+        }
+
+        .sidebar.minimized .logo-section,
+        .sidebar.minimized .sidebar-nav a span {
+            display: none;
+            /* Esconde texto e logo */
+        }
+
+        .sidebar.minimized .sidebar-nav a {
+            text-align: center;
+            padding: 14px 0;
+        }
+
+        .sidebar.minimized .sidebar-nav a i {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .sidebar.minimized .border-top {
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        /* Botão toggle */
+        toggleSidebar {
+            transition: transform .3s;
+        }
+
+        .sidebar.minimized #toggleSidebar i {
+            transform: rotate(180deg);
+        }
+
+        toggleSidebar {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: transform .3s;
+        }
+
+        toggleSidebar:hover {
+            color: #a5b4fc;
+        }
+
+        .sidebar.minimized #toggleIcon {
+            transform: rotate(180deg);
+            /* << vira >> */
+        }
+
+        /* Seções expansíveis */
+        .section-header {
+            cursor: pointer;
+            transition: background .3s;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .toggle-icon {
+            transition: transform .3s;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+            /* Seta vira para direita quando fechado */
+        }
+
+        /* Minimização automática */
+        .gestao-nav.collapsed,
+        .olt-nav.collapsed {
+            display: none;
+        }
+
+        /* Transições suaves para toggle das seções */
+        .gestao-nav,
+        .olt-nav {
+            transition: all 0.4s ease-in-out;
+            /* Expansão/contracção suave */
+            overflow: hidden;
+            /* Esconde conteúdo durante animação */
+        }
+
+        .gestao-nav.collapsed,
+        .olt-nav.collapsed {
+            height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .toggle-icon {
+            transition: transform 0.4s ease;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+            /* Seta vira para direita quando fechado */
+        }
+
+        /* Transições suaves para toggle das seções (sem seta visível) */
+        .gestao-nav,
+        .olt-nav {
+            transition: all 0.4s ease-in-out;
+            overflow: hidden;
+        }
+
+        .gestao-nav.collapsed,
+        .olt-nav.collapsed {
+            height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        /* Remove seta do cabeçalho */
+        .section-header .bi-chevron-down,
+        .section-header .bi-chevron-right {
+            display: none;
+        }
+
+        /* Transições suaves para expansão/contracção das seções */
+        .gestao-nav,
+        .olt-nav {
+            transition: height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+            overflow: hidden;
+            height: auto;
+            opacity: 1;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .gestao-nav.collapsed,
+        .olt-nav.collapsed {
+            height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .section-header {
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+
+        .table-dark {
+            --bs-table-bg: rgba(40, 40, 80, 0.8);
+            --bs-table-color: #ffffff;
+            --bs-table-border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .badge.bg-success {
+            background-color: #34d399 !important;
+        }
+
+        .badge.bg-danger {
+            background-color: #f87171 !important;
+        }
+
+        .badge.bg-warning {
+            background-color: #fbbf24 !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: #6b7280 !important;
+        }
+    </style>
+
+<body>
+    <div class="sidebar" id="sidebar">
+        <!-- Seção Gestão (principal) -->
+        <div class="management-section">
+            <div class="text-center mt-5 pt-4 mb-3 section-header" id="toggleGestao">
+                <i class="bi bi-diagram-3 fs-1 text-white mb-3"
+                    style="font-size: 4rem; filter: drop-shadow(0 0 10px #6366f1);"></i>
+                <h5 class="text-light fw-bold mb-1">LCSoft</h5>
+                <small class="text-light opacity-90">Gestão de Provedor</small>
+            </div>
+
+            <nav class="sidebar-nav gestao-nav">
+                <a href="/" class="active"><i class="bi bi-speedometer2 me-2"></i><span>Dashboard</span></a>
+                <a href="/clientes"><i class="bi bi-people me-2"></i><span>Clientes</span></a>
+                <a href="/adicionar_cliente"><i class="bi bi-person-plus me-2"></i><span>+ Novo Cliente</span></a>
+                <a href="/relatorios"><i class="bi bi-bar-chart me-2"></i><span>Relatórios</span></a>
+                <a href="/faturas"><i class="bi bi-receipt me-2"></i><span>Faturas / Financeiro</span></a>
+                <a href="/ordens_servico"><i class="bi bi-tools me-2"></i><span>Ordens de Serviço</span></a>
+                <a href="/nova_os"><i class="bi bi-plus-circle me-2"></i><span>+ Nova OS</span></a>
+            </nav>
+        </div>
+
+        <!-- Seção OLT (secundária) -->
+        <div class="olt-section mt-4">
+            <div class="text-center mb-3 section-header" id="toggleOlt">
+                <i class="bi bi-hdd-network fs-1 text-white mb-2"
+                    style="font-size: 3rem; filter: drop-shadow(0 0 10px #6366f1);"></i>
+                <h6 class="text-light fw-bold">Módulo OLT</h6>
+            </div>
+
+            <nav class="sidebar-nav olt-nav collapsed"> <!-- Começa minimizada -->
+                <a href="/olt_dashboard"><i class="bi bi-diagram-3 me-2"></i><span>OLT Dashboard</span></a>
+                <a href="/provisionamento"><i class="bi bi-plug me-2"></i><span>Provisionamento</span></a>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const toggleGestao = document.getElementById('toggleGestao');
+        const toggleOlt = document.getElementById('toggleOlt');
+        const gestaoNav = document.querySelector('.gestao-nav');
+        const oltNav = document.querySelector('.olt-nav');
+
+        // Função para expandir OLT e minimizar Gestão
+        function openOltSection() {
+            oltNav.classList.remove('collapsed');
+            toggleOlt.classList.remove('collapsed');
+            gestaoNav.classList.add('collapsed');
+            toggleGestao.classList.add('collapsed');
+        }
+
+        // Função para expandir Gestão e minimizar OLT
+        function openGestaoSection() {
+            gestaoNav.classList.remove('collapsed');
+            toggleGestao.classList.remove('collapsed');
+            oltNav.classList.add('collapsed');
+            toggleOlt.classList.add('collapsed');
+        }
+
+        // Detecta a página atual e abre a seção correta
+        const currentPath = window.location.pathname;
+        if (currentPath === '/olt_dashboard' || currentPath === '/provisionamento') {
+            openOltSection();
+        } else {
+            openGestaoSection();
+        }
+
+        // Toggle manual em Gestão
+        toggleGestao.addEventListener('click', () => {
+            if (gestaoNav.classList.contains('collapsed')) {
+                openGestaoSection();
+            } else {
+                gestaoNav.classList.add('collapsed');
+                toggleGestao.classList.add('collapsed');
+            }
+        });
+
+        // Toggle manual em OLT
+        toggleOlt.addEventListener('click', () => {
+            if (oltNav.classList.contains('collapsed')) {
+                openOltSection();
+            } else {
+                oltNav.classList.add('collapsed');
+                toggleOlt.classList.add('collapsed');
+            }
+        });
+    </script>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('minimized');
+
+            // Muda ícone: << ↔ >>
+            if (sidebar.classList.contains('minimized')) {
+                toggleIcon.classList.remove('bi-chevron-left');
+                toggleIcon.classList.add('bi-chevron-right');
+            } else {
+                toggleIcon.classList.remove('bi-chevron-right');
+                toggleIcon.classList.add('bi-chevron-left');
+            }
+
+            // Salva preferência
+            localStorage.setItem('sidebarMinimized', sidebar.classList.contains('minimized'));
+        });
+
+        // Carrega estado salvo
+        if (localStorage.getItem('sidebarMinimized') === 'true') {
+            sidebar.classList.add('minimized');
+            toggleIcon.classList.replace('bi-chevron-left', 'bi-chevron-right');
+        }
+    </script>
+
+    <div class="main-content">
+        <!-- Barra de busca alinhada com o início dos cards (mesmo padding esquerdo) -->
+        <div class="search-bar mb-4" style="padding-left: 20px; padding-right: 20px;">
+            <form class="d-flex position-relative w-100" action="{{ url_for('busca_global') }}" method="GET">
+                <input class="form-control glass-card border-0 text-light rounded-pill ps-4 pe-5 py-3" type="search"
+                    name="q" placeholder="Buscar cliente, OS, fatura..." required autofocus>
+                <button class="btn position-absolute end-0 top-50 translate-middle-y pe-4" type="submit">
+                    <i class="bi bi-search text-light fs-5"></i>
+                </button>
+            </form>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>

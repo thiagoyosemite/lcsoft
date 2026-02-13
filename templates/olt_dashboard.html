@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid px-4 py-5">
+    <h2 class="text-center mb-5 text-light fw-bold">Dashboard OLT - {{ olt_name }}</h2>
+
+    {% if error_msg %}
+    <div class="alert alert-info text-center mb-4">
+        {{ error_msg }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <i class="bi bi-check-circle-fill fs-1 text-success mb-3"></i>
+                    <h5 class="text-light">ONUs Online</h5>
+                    <h2 class="text-success">{{ online }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <i class="bi bi-x-circle-fill fs-1 text-danger mb-3"></i>
+                    <h5 class="text-light">ONUs Offline</h5>
+                    <h2 class="text-danger">{{ offline }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-warning">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-triangle-fill fs-1 text-warning mb-3"></i>
+                    <h5 class="text-light">ONUs com Loss</h5>
+                    <h2 class="text-warning">{{ com_loss }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg px-5">
+            Voltar ao Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
